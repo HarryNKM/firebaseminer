@@ -16,8 +16,6 @@ class FirebaseHelper {
   FirebaseAuth auth = FirebaseAuth.instance;
   User? user;
 
-  FirebaseHelper() {}
-
   User? getUser() {
     return user;
   }
@@ -29,11 +27,9 @@ class FirebaseHelper {
       if (credential.user != null) {
         user = credential.user;
         return true;
+      } else {
+        return false;
       }
-      else
-        {
-          return false;
-        }
     } on FirebaseAuthException catch (e) {
       DelightToastBar(
         position: DelightSnackbarPosition.top,
@@ -53,6 +49,7 @@ class FirebaseHelper {
   void signout() {
     auth.signOut();
   }
+
   Future<void> signUpAuth(email, password) async {
     try {
       await auth.createUserWithEmailAndPassword(
@@ -61,7 +58,6 @@ class FirebaseHelper {
       );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        
       } else if (e.code == 'email-already-in-use') {
         Get.snackbar(e.code, "");
       }

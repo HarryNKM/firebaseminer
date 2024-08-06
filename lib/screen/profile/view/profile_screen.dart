@@ -1,8 +1,11 @@
+import 'package:firebaseminer/utils/helper/firestore_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 import '../../../utils/helper/firebase_helper.dart';
+import '../controller/profile_controller.dart';
+import '../model/profile_model.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -16,6 +19,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
   TextEditingController txtName = TextEditingController();
   TextEditingController txtPhone = TextEditingController();
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
+  ProfileController controller = Get.put(ProfileController());
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  Future<void> getData() async {
+    await controller.getUserDetail();
+    txtEmail.text = controller.model.value.email!;
+    txtName.text = controller.model.value.name!;
+    txtPhone.text = controller.model.value.phone!;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,6 +135,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: MaterialButton(
                         onPressed: () async {
                           if (formkey.currentState!.validate()) {
+                            ProfileModel model = ProfileModel(
+                              phone: txtPhone.text,
+                              email: txtEmail.text,
+                              name: txtName.text,
+                            );
+                            FirestoreHelper.helper.userProfile(model);
                             Get.offAllNamed('home');
                           }
                         },
